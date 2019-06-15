@@ -47,12 +47,6 @@
       renderTodo();
     });
 
-    const label = document.createElement('label');
-    label.innerText = text;
-    label.addEventListener('click', () => {
-      li.classList.toggle('editing');
-    });
-
 
     const button = document.createElement('button');
     button.className = 'destroy';
@@ -71,6 +65,17 @@
         return el;
       });
       renderTodo();
+    });
+    editInput.addEventListener('blur', () => {
+      li.classList.remove('editing');
+    });
+
+    const label = document.createElement('label');
+    label.innerText = text;
+    label.addEventListener('click', (evt) => {
+      li.classList.toggle('editing');
+      editInput.focus();
+      // evt.target.parentNode.nextSibling.focus();
     });
 
     li.appendChild(view);
@@ -127,10 +132,10 @@
 
   });
 
-  document.addEventListener('click', (evt) => {
-    if (evt.target.className === 'edit' || evt.target.tagName == 'LABEL') return;
-    document.querySelectorAll('.editing').forEach( el => el.classList.remove('editing'));
-  });
+  // document.addEventListener('click', (evt) => {
+  //   if (evt.target.className === 'edit' || evt.target.tagName == 'LABEL') return;
+  //   document.querySelectorAll('.editing').forEach( el => el.classList.remove('editing'));
+  // });
 
   toggleAll.addEventListener('click', (evt) => {
     todos = todos.map(el => {

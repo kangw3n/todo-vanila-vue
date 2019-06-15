@@ -15,6 +15,14 @@
       height: 16px;
       background-image: url('data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==');
      }
+		 .filters li a {
+			 text-transform: capitalize;
+			 padding-top: 0;
+			 padding-bottom: 0;
+			 margin-top: 0;
+			 margin-bottom: 0;
+			 display: inline-block;
+		 }
   </style>
 </head>
 
@@ -26,21 +34,21 @@
 		</header>
 		<!-- This section should be hidden by default and shown when there are todos -->
 		<section class="main">
-			<input id="toggle-all" class="toggle-all" type="checkbox" />
-			<label for="toggle-all" @click="toggleAll">Mark all as complete</label>
+			<input id="toggle-all" class="toggle-all"  @click="toggleAll" type="checkbox" />
+			<label for="toggle-all">Mark all as complete</label>
 			<ul class="todo-list">
 				<!-- These are here just to show the structure of the list items -->
         <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
 
 
 
-        <li v-for="(todo,index) in todos" :class="{'completed': todo.isDone, 'editing': todo.isEdit}" :key="index">
+        <li v-for="(todo,index) in filteredTodo" :class="{'completed': todo.isDone, 'editing': todo.isEdit}" :key="index">
           <div class="view">
             <input class="toggle" @change="todo.isDone = !todo.isDone" :checked="todo.isDone" type="checkbox" />
-            <label @click="todo.isEdit = true">{{todo.text}}</label>
+            <label @click="toggleEdit(todo, index)">{{todo.text}}</label>
             <button class="destroy" @click="deleteTodo(todo.id)"></button>
           </div>
-          <input class="edit" :value="todo.text" @keyup.enter="editTodo(todo.id, $event)" />
+          <input class="edit" :value="todo.text" :ref="'edit' + index" @blur="todo.isEdit = false" @keyup.enter="editTodo(todo.id, $event)" />
         </li>
 
 
@@ -54,7 +62,10 @@
 				<strong>{{countTaskIsDone}}<strong> item left</span>
 			<!-- Remove this if you don't implement routing -->
 			<ul class="filters">
-				<li>
+				<li v-for="(option, index) in filterOptions" :key="index">
+					<a href="#" :class="{'selected': option === filtered}" @click="filterTodo(option, $event)">{{option}}</a>
+				</li>
+				<!-- <li>
 					<a class="selected" href="#/">All</a>
 				</li>
 				<li>
@@ -62,10 +73,10 @@
 				</li>
 				<li>
 					<a href="#/completed">Completed</a>
-				</li>
+				</li> -->
 			</ul>
 			<!-- Hidden if no completed items are left ↓ -->
-			<button class="clear-completed">Clear completed</button>
+			<button class="clear-completed" @click="clearCompleted">Clear completed</button>
 		</footer>
   </section>
   
